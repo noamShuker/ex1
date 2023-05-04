@@ -4,12 +4,12 @@
 #include "IsraeliQueue.h"
 #include <stdlib.h>
 
-typedef struct Node // Must include:
+typedef struct Node
 {
     void* value;
     struct Node* next;
     int friends;
-    int rivels;
+    int rivals;
 }Node;
 
 typedef struct IsraeliQueue_t
@@ -49,6 +49,7 @@ friendship_th , int rivalry_th)
     {
         newQueue->friendFunction[i] = friendshipFunction[i];
     }
+    return newQueue;
 
 }
 
@@ -57,4 +58,21 @@ int friendArraySize (FriendshipFunction * friendshipFunction)
     int i = 0;
     for (i = 0; friendshipFunction[i] != NULL; ++i);
     return i;
+}
+
+IsraeliQueueError IsraeliQueueEnqueue(IsraeliQueue, void *)
+{
+
+}
+
+
+
+IsraeliQueueError QueueEnqueue(IsraeliQueue queue, void* value)
+{
+
+}
+
+IsraeliQueue IsraeliQueueClone(IsraeliQueue q)
+{
+
 }
