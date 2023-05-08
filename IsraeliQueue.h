@@ -13,6 +13,9 @@ typedef int (*ComparisonFunction)(void*,void*);
 
 typedef enum { ISRAELIQUEUE_SUCCESS, ISRAELIQUEUE_ALLOC_FAILED, ISRAELIQUEUE_BAD_PARAM, ISRAELI_QUEUE_ERROR } IsraeliQueueError;
 
+typedef struct Node Node;
+
+Node* nodeCreate (void* value);
 /**Error clarification:
  * ISRAELIQUEUE_SUCCESS: Indicates the function has completed its task successfully with no errors.
  * ISRAELIQUEUE_ALLOC_FAILED: Indicates memory allocation failed during the execution of the function.
