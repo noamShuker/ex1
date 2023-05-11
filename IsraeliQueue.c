@@ -22,7 +22,7 @@ typedef struct IsraeliQueue_t
     int friendship_th;
     int rivalry_th;
 
-};
+}IsraeliQueue_t;
 
 int friendArraySize (FriendshipFunction * friendshipFunction);
 
@@ -312,7 +312,7 @@ IsraeliQueueError IsraeliQueueAddFriendshipMeasure(IsraeliQueue q, FriendshipFun
         return ISRAELIQUEUE_BAD_PARAM;
     }
     int arrSize = friendArraySize(q->friendFunction);
-    FriendshipFunction* newFriendshipFunction = malloc(sizeof(FriendshipFunction) * (arrSize + 1));
+    FriendshipFunction* newFriendshipFunction = malloc(sizeof(FriendshipFunction) * (arrSize + 2));
     if(newFriendshipFunction == NULL)
     {
         free(newFriendshipFunction);
@@ -323,8 +323,8 @@ IsraeliQueueError IsraeliQueueAddFriendshipMeasure(IsraeliQueue q, FriendshipFun
     {
         newFriendshipFunction[i] = q->friendFunction[i];
     }
-    newFriendshipFunction[i-1] = friendshipFunction;
-    newFriendshipFunction[i] = NULL;
+    newFriendshipFunction[i] = friendshipFunction;
+    newFriendshipFunction[i+1] = NULL;
     FriendshipFunction* temp = q->friendFunction;
     q->friendFunction = newFriendshipFunction;
     free(temp);
@@ -401,9 +401,65 @@ IsraeliQueue IsraeliQueueMerge(IsraeliQueue* qarr,ComparisonFunction comparisonF
 
 }
 
-/*IsraeliQueueError IsraeliQueueImprovePositions(IsraeliQueue q)
+bool isInLine (Node* person, Node* lineHead)
 {
-     Node* flag = q->head->next;
-     Node* temp = q->tail;
-     while()
-}*/
+    Node* temp = lineHead;
+    while (temp != NULL)
+    {
+        if(temp->value == person->value)
+        {
+            return true;
+        }
+        temp = temp->next;
+    }
+    return false;
+}
+
+int countLine (Node* head)
+{
+    int count = 0;
+    Node* temp = head;
+    while (temp != NULL)
+    {
+        count++;
+        temp = temp->next;
+    }
+    return count;
+}
+
+IsraeliQueueError IsraeliQueueImprovePositions(IsraeliQueue q)
+{
+    if(q == NULL || q->head == NULL || q->tail == NULL)
+    {
+        return ISRAELIQUEUE_BAD_PARAM;
+    }
+    if(q->head->next == NULL)
+    {
+        Node *current = q->tail;
+        Node *temp1 = q->head;
+        Node *used = nodeCreate(q->tail->value);
+        Node *temp2 = used;
+        while (current != q->head->next)
+        {
+            temp1 = q->head;
+            while (temp1->next->next != current) {
+                temp1 = temp1->next;
+            }
+            current == temp1->next;
+            if (!isInLine(current, used)) {
+                temp1->next = current->next;
+                current->next = NULL;
+                IsraeliQueueEnqueue(q, current->value);
+                free(current);
+                temp2->next = nodeCreate(current->value);
+                temp2 = temp2->next;
+
+            }
+
+
+        }
+        free(used);
+    }
+    return ISRAELIQUEUE_SUCCESS;
+
+}
