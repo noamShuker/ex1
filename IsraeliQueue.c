@@ -29,7 +29,7 @@ int friendArraySize (FriendshipFunction * friendshipFunction);
 IsraeliQueue IsraeliQueueCreate(FriendshipFunction * friendshipFunction, ComparisonFunction comparisonFunction, int
 friendship_th , int rivalry_th)
 {
-    if (/*comparisonFunction ==*/ NULL || friendship_th == NULL || rivalry_th == NULL || friendshipFunction == NULL)
+    if (friendshipFunction == NULL)
     {
         return NULL;
     }
@@ -46,7 +46,7 @@ friendship_th , int rivalry_th)
     newQueue->head = NULL;
     newQueue->tail = NULL;
     int arrLen = friendArraySize(friendshipFunction) + 1;
-    newQueue->friendFunction = malloc(arrLen * sizeof(*friendshipFunction));
+    newQueue->friendFunction = malloc(arrLen * sizeof(FriendshipFunction));
     for (int i = 0; i < arrLen; ++i)
     {
         newQueue->friendFunction[i] = friendshipFunction[i];
@@ -133,6 +133,7 @@ bool hasRivalsBehind (Node* person, IsraeliQueue q, Node* position, bool rivalCh
 
             return  true;
         }
+        temp = temp->next;
     }
 
     return false;
@@ -148,7 +149,7 @@ IsraeliQueueError IsraeliQueueEnqueue(IsraeliQueue q, void * value)
     }
     Node* person = nodeCreate(value);
     Node* temp = q->head;
-    while (temp->next->next != NULL)
+    while (temp != NULL && !hasEntered)
     {
         if(temp->friends < 5 && areFriends(temp, person, q) == -1)
         {
@@ -157,7 +158,6 @@ IsraeliQueueError IsraeliQueueEnqueue(IsraeliQueue q, void * value)
                 temp->friends ++;
                 person->next = temp->next;
                 temp->next = person;
-                temp = temp->next;
                 hasEntered = true;
             }
             else
@@ -180,7 +180,6 @@ IsraeliQueueError QueueEnqueue(IsraeliQueue queue, Node* person)
 
     if(person->value == NULL)
     {
-        printf("SHOELALA\n");
         return ISRAELIQUEUE_BAD_PARAM;
     }
     Node* newPerson = malloc(sizeof (*newPerson));
@@ -228,7 +227,7 @@ IsraeliQueue IsraeliQueueClone(IsraeliQueue q)
 
 void* IsraeliQueueDequeue(IsraeliQueue q)
 {
-    if(q == NULL || q->head == NULL)
+    if(q == NULL || q->head == NULL || q->head->next == NULL)
     {
         return NULL;
     }
@@ -427,33 +426,50 @@ int countLine (Node* head)
     return count;
 }
 
+bool allInLine (IsraeliQueue q, Node* used)
+{
+    Node* temp = q->head;
+    while (temp != NULL)
+    {
+        if(!isInLine(temp, used))
+        {
+            return false;
+        }
+        temp = temp->next;
+    }
+    return true;
+}
+
 IsraeliQueueError IsraeliQueueImprovePositions(IsraeliQueue q)
 {
-    if(q == NULL || q->head == NULL || q->tail == NULL)
+    if(q == NULL || q->head == NULL)
     {
         return ISRAELIQUEUE_BAD_PARAM;
     }
-    if(q->head->next == NULL)
+    if(q->head->next != NULL && q->tail != NULL)
     {
         Node *current = q->tail;
         Node *temp1 = q->head;
         Node *used = nodeCreate(q->tail->value);
         Node *temp2 = used;
-        while (current != q->head->next)
+        while (allInLine(q, used))
         {
             temp1 = q->head;
-            while (temp1->next->next != current) {
+            while (temp1->next->next != current)
+            {
                 temp1 = temp1->next;
             }
-            current == temp1->next;
-            if (!isInLine(current, used)) {
+            current = temp1->next;
+            if (!isInLine(current, used))
+            {
                 temp1->next = current->next;
                 current->next = NULL;
                 IsraeliQueueEnqueue(q, current->value);
-                free(current);
                 temp2->next = nodeCreate(current->value);
                 temp2 = temp2->next;
-
+                Node* memoryTemp = current;
+                current = temp1;
+                free(memoryTemp);
             }
 
 

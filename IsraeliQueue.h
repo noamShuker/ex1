@@ -19,6 +19,7 @@ Node* nodeCreate (void* value);
 void PrintIsraeliQueue (IsraeliQueue q);
 int friendArraySize (FriendshipFunction * friendshipFunction);
 IsraeliQueueError QueueEnqueue(IsraeliQueue queue, Node* person);
+Node* getHead (IsraeliQueue q);
 /**Error clarification:
  * ISRAELIQUEUE_SUCCESS: Indicates the function has completed its task successfully with no errors.
  * ISRAELIQUEUE_ALLOC_FAILED: Indicates memory allocation failed during the execution of the function.
