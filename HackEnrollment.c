@@ -47,6 +47,28 @@ typedef struct EnrollmentSystem_t
 
 }EnrollmentSystem_t;
 
+void unCapital (EnrollmentSystem sys)
+{
+    if(sys == NULL || sys->students == NULL)
+    {
+        return;
+    }
+    for (int i = 0; sys->students[i] != NULL; ++i)
+    {
+        char* name = sys->students[i]->name;
+        if(name != NULL)
+        {
+            for (int j = 0; name[j] != "\0"; ++j)
+            {
+                if (name[j] >= 'A' && name[j] <= 'Z')
+                {
+                    name[j] += 'a' - 'A';
+                }
+            }
+        }
+    }
+}
+
 bool sameStr (char* str1, char* str2)
 {
     if(str1 == NULL || str2 == NULL)

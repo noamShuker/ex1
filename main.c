@@ -1,39 +1,88 @@
 //
 // Created by noams on 5/8/2023.
 //
-#include "IsraeliQueue.h"
 #include "HackEnrollment.h"
 #include <stdlib.h>
 #include <stdio.h>
-#include <string.h>
-#include <stdbool.h>
-#include <assert.h>
 
 
-char* stringDuplicator(char* s, int times)
+
+// argc is 6 or 7
+// argv is ,name of file. ,flag. ,students file. ,courses file. ,hackers file. ,queues file. ,output file
+
+FILE** openFiles (char** argv)
 {
-    if(!s || times <= 0)
+    FILE** files = malloc(sizeof(FILE*) * 5);
+    if (files == NULL)
     {
         return NULL;
     }
-    unsigned long long LEN = strlen(s);
-    char* out = malloc(LEN*times+1);
-    if(!out)
+    int i = 1;
+    if(argv[1] == "-i")
     {
+        i++;
+    }
+    int j;
+    for (j = 0; j < 4; ++j)
+    {
+        files[j] = fopen(argv[j+i], "r");
+        if(files[j] == NULL)
+        {
+            for (int k = i; k < j; ++k)
+            {
+                fclose(files[k]);
+            }
+            free(files);
+            return NULL;
+        }
+    }
+    files[j] = fopen(argv[j+i], "w");
+    if(files[j] == NULL)
+    {
+        for (int k = i; k < j; ++k)
+        {
+            fclose(files[k]);
+        }
+        free(files);
         return NULL;
     }
-    char* temp = out;
-    for (int i=0; i < times; i++)
-    {
-        strcpy(out, s);
-        out = out + LEN;
-    }
-    out = temp;
-    return out;
+    return files;
 }
 
-int main()
+int main(int argc, char** argv)
 {
-    printf("%s\n", stringDuplicator("Yeah mister white yeah science", 6));
+    if (argc != 6 && argc != 7)
+    {
+        return 0;
+    }
+
+    FILE** files = openFiles(argv);
+
+    EnrollmentSystem  enrollmentSystem = createEnrollment(files[0], files[1], files[2]);
+    if(enrollmentSystem == NULL)
+    {
+        for (int i = 0; i < 5; ++i)
+        {
+            fclose(files[i]);
+        }
+        free(files);
+        return 0;
+    }
+    if(argc == 7)
+    {
+        unCapital(enrollmentSystem);
+    }
+
+    enrollmentSystem = readEnrollment(enrollmentSystem, files[3]);
+
+    hackEnrollment(enrollmentSystem, files[4]);
+
+    for (int i = 0; i < 5; ++i)
+    {
+        fclose(files[i]);
+    }
+    free(files);
+    return 0;
+
 }
 
